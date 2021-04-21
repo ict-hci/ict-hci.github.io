@@ -1,0 +1,59 @@
+name: Hexo
+
+on:
+  push:
+    branches:
+      - hexo
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    name: Hexo build and deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v2.3.4
+
+      - name: Setup node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install pandoc -y
+          npm install hexo-cli -g
+          npm install
+
+      - name: Setup Deploy Private Key
+        env:
+          HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Set Git Config
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Retain Commit History
+        run: |
+          git clone --branch master git@github.com:ict-hci/ict-hci.github.io.git .deploy_git 
+          cd .deploy_git
+          git checkout master
+          cd ../
+
+      - name: Deploy blog
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          hexo clean
+          hexo generate
+          hexo deploy -m "$COMMIT_MSG"
