@@ -1,5 +1,5 @@
 ---
-title: model-quantization
+title: 模型量化方法简介
 date: 2021-04-27 19:07:32
 categories:
 - 深度学习
