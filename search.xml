@@ -20,7 +20,7 @@
 ]]></content>
   </entry>
   <entry>
-    <title>model-quantization</title>
+    <title>模型量化方法简介</title>
     <url>/2021/04/27/model-quantization/</url>
     <content><![CDATA[<h1 id="模型量化方法简介">模型量化方法简介</h1>
 <p>模型量化可以理解为把模型中的 32 位浮点数参数压缩成 8 位整数，从而达到模型压缩的效果。目前的模型量化的方法仍然比较混乱，笔者亦了解不深。这里简单记录一下大致的方法，供后续优化时参考。</p>
